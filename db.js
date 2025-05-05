@@ -1,18 +1,30 @@
-import mongoose from 'mongoose';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 import dotenv from 'dotenv';
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); 
 
 const connectDB = async () => {
   try {
-    mongoose.set('debug', true); // Enable mongoose debug mode
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-
+    const client = new MongoClient(process.env.MONGO_URI, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      },
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 30000,
+      monitorCommands: true,
     });
-    console.log(`MongoDB connected: ${conn.connection.host}`);
+
+    console.log("Tentando conectar ao MongoDB...");
+    await client.connect();
+    console.log("Conexão bem-sucedida!");
+    await client.db("admin").command({ ping: 1 });
+    console.log("Ping bem-sucedido!");
+  
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
-    process.exit(1); // Exit process on failure
+    process.exit(1); 
   }
 };
 
