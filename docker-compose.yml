@@ -1,0 +1,13 @@
+services:
+ database:
+   container_name: mysql9
+   image: mysql
+   environment:
+     MYSQL_ROOT_PASSWORD: 123123
+     MYSQL_ALLOW_EMPTY_PASSWORD: false
+   ports:
+     - 3306:3306
+   volumes:
+     - ./mysql:/var/lib/mysql
+volumes:
+    mysql_data:

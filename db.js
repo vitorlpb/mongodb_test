@@ -1,9 +1,10 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import dotenv from 'dotenv';
+import mysql from 'mysql2/promise';
 
 dotenv.config(); 
 
-const connectDB = async () => {
+const connectMongoDB = async () => {
   try {
     const client = new MongoClient(process.env.MONGO_URI, {
       serverApi: {
@@ -21,11 +22,30 @@ const connectDB = async () => {
     console.log("Conexão bem-sucedida!");
     await client.db("admin").command({ ping: 1 });
     console.log("Ping bem-sucedido!");
-  
+    return client.db("employees");
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
     process.exit(1); 
   }
 };
 
-export default connectDB;
+const mysqlConnection = async () => {
+  try {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '123123',
+      database: 'employees',
+    });
+    console.log("Conexão com o MySQL foi bem-sucedida!");
+    return connection;
+  } catch (err) {
+    console.error('Erro ao conectar ao MySQL:', err.message);
+  }
+}
+
+export { 
+  connectMongoDB, 
+  mysqlConnection
+};
+
