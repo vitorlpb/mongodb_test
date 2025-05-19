@@ -1,12 +1,12 @@
 async function fetchEmployee(URL) {
     try {
-        const response = await fetch(URL); // Altere a URL para a rota correta
+        const response = await fetch(URL); 
         if (!response.ok) {
             throw new Error('Erro ao buscar o funcionário');
         }
         const employees = await response.json();
         const tableBody = document.getElementById('employeeTableBody');
-        tableBody.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+        tableBody.innerHTML = '';
 
         employees.forEach(employee => {
             const row = document.createElement('tr');
@@ -21,7 +21,7 @@ async function fetchEmployee(URL) {
             tableBody.appendChild(row);
 
             const detailsRow = document.createElement('tr');
-            detailsRow.style.display = 'none'; // Esconde a linha de detalhes inicialmente
+            detailsRow.style.display = 'none';
             detailsRow.innerHTML = `
                 <td colspan="6">
                     <strong>Salários:</strong>
@@ -46,7 +46,7 @@ async function fetchEmployee(URL) {
             `;
             tableBody.appendChild(detailsRow);
 
-            row.detailsRow = detailsRow; // Associa a linha de detalhes à linha principal
+            row.detailsRow = detailsRow; 
         });
     } catch (error) {
         const tableBody = document.getElementById('employeeTableBody');
@@ -57,10 +57,10 @@ async function fetchEmployee(URL) {
 function toggleDetails(button) {
     const detailsRow = button.parentElement.parentElement.detailsRow;
     if (detailsRow.style.display === 'none') {
-        detailsRow.style.display = 'table-row'; // Mostra a linha de detalhes
+        detailsRow.style.display = 'table-row';
         button.textContent = 'Esconder';
     } else {
-        detailsRow.style.display = 'none'; // Esconde a linha de detalhes
+        detailsRow.style.display = 'none'; 
         button.textContent = 'Detalhes';
     }
 }
@@ -68,7 +68,7 @@ function toggleDetails(button) {
 function formatDate(dateString) {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
 }

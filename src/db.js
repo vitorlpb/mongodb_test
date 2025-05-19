@@ -41,7 +41,6 @@ const mysqlConnection = async () => {
   }
 }
 
-
 const createIndexes = async (collection) => {
   try {
     await collection.createIndex({ emp_no: 1 }, { unique: true }); 
