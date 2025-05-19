@@ -17,11 +17,8 @@ const connectMongoDB = async () => {
       monitorCommands: true,
     });
 
-    console.log("Tentando conectar ao MongoDB...");
     await client.connect();
-    console.log("Conexão bem-sucedida!");
-    await client.db("admin").command({ ping: 1 });
-    console.log("Ping bem-sucedido!");
+    // await client.db("admin").command({ ping: 1 });
     return client.db("employees");
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
