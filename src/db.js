@@ -41,8 +41,23 @@ const mysqlConnection = async () => {
   }
 }
 
+
+const createIndexes = async (collection) => {
+  try {
+    await collection.createIndex({ emp_no: 1 }, { unique: true }); 
+    await collection.createIndex({ "dept_emp.dept_no": 1 }); 
+    await collection.createIndex({ "dept_manager.dept_no": 1 }); 
+    await collection.createIndex({ "salaries.from_date": 1, "salaries.to_date": 1 }); 
+    await collection.createIndex({ "titles.title": 1 }); 
+    console.log("Índices criados com sucesso!");
+  } catch (err) {
+    console.error("Erro ao criar índices:", err);
+  }
+};
+
 export { 
   connectMongoDB, 
-  mysqlConnection
+  mysqlConnection,
+  createIndexes,
 };
 

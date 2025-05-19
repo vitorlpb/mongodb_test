@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../style.css">
+    <title>BD2 - M2</title>
+</head>
+<body>
+    <main>
+            <button onclick="fetchEmployee(`http://localhost:5000/api/findAll`)">Buscar Todos os Employees</button>
+            <button onclick="fetchEmployee(`http://localhost:5000/api/findLast`)">Buscar o ultimo Employee</button>
+            <button onclick="fetchEmployee(`http://localhost:5000/api/findById/${document.getElementById('dado').value}`)">Buscar Employee por ID</button>
+            <button onclick="fetchEmployee(`http://localhost:5000/api/findByName/${document.getElementById('dado').value}`)">Buscar Employee por Nome</button>
+            <button onclick="fetchEmployee(`http://localhost:5000/api/findByManager/${document.getElementById('dado').value}`)">Buscar Employee por Manager</button>
+            <button onclick="fetchEmployee(`http://localhost:5000/api/findByTitle/${document.getElementById('dado').value}`)">Buscar Employee por Title</button>
+            <button onclick="fetchEmployee(`http://localhost:5000/api/findBydept/${document.getElementById('dado').value}`)">Buscar Employee por Departamento</button>
+            <!-- <button onclick="fetchEmployee('http://localhost:5000/api/allEmployeesAvaregeSalaryByDepartment')">Media Salarial por Departamento</button> -->
+            <button onclick="window.location.href='http://localhost:5000/api/allEmployeesAvaregeSalaryByDepartment'">Media Salarial por Departamento</button>
+            <input type="text" name="dado" id="dado" placeholder="ID do Employee">
+        <section>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Sobrenome</th>
+                        <th>Gênero</th>
+                        <th>Data de Contratação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                    <tr>
+                        <td colspan="6">Clique no botão para buscar os dados.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script src="./script.js"></script>
+</body>
+</html>

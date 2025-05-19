@@ -14,17 +14,23 @@ const employeeFindLast = async () => {
   return employees;
 };
 
-const employeeFindByNameAndLastName = async (first_name, last_name) => {
+const employeeFindByNameAndLastName = async (name) => {
   const db = await connectMongoDB();
   const collection = db.collection("employee");
-  const employees = await collection.find({ first_name: first_name, last_name: last_name }).toArray();
-  return employees;
+  const { firstPart, lastPart } = formatTwoPartsString(name);
+  const employees = await collection.find({ first_name: {$regex: firstPart}, last_name: {$regex: lastPart} }).toArray(); //$regex
+  if (employees.length === 0) {
+    const employees = await collection.find({last_name: {$regex: firstPart} }).toArray();
+    return employees;
+  }else {
+    return employees;
+  }
 };
 
 const employeeFindById = async (emp_no) => {
   const db = await connectMongoDB();
   const collection = db.collection("employee");
-  const employees = await collection.find({ emp_no: emp_no }).toArray();
+  const employees = await collection.find({ emp_no: parseInt(emp_no) }).toArray();
   return employees;
 };
 
@@ -34,7 +40,7 @@ const employeeFindByTitle = async (title) => {
   const { firstPart, lastPart } = formatTwoPartsString(title);
   const formatedTitle = `${firstPart} ${lastPart}`;
   const employees = await collection.find({
-    "titles.title": { $regex: formatedTitle }
+    "titles.title": { $regex: formatedTitle.trim() }
   }).toArray();
   return employees;
 };
@@ -45,7 +51,7 @@ const employeeFindByDepartment = async (department) => {
   const { firstPart, lastPart } = formatTwoPartsString(department);
   const formatedDepartment = `${firstPart} ${lastPart}`;
   const employees = await collection.find({
-    "departments.dept_name": formatedDepartment
+    "departments.dept_name": formatedDepartment.trim()
   }).toArray();
   return employees;
 };
@@ -78,17 +84,22 @@ const employeesFindAllByManager = async (manager) => {
   const collection = db.collection("employee");
   let managerData;
   if (isNaN(manager)) {
-    const {firtPart, lastPart} = formatTwoPartsString(manager);
-    managerData = await employeeFindByNameAndLastName(firtPart, lastPart);
+    const {firstPart, lastPart} = formatTwoPartsString(manager);
+    managerData = await employeeFindByNameAndLastName(firstPart, lastPart);
   } else {
-    managerData = await employeeFindById(manager);
+    managerData = await employeeFindById(parseInt(manager));
   }
 
   if (managerData.length === 0) {
     return [];
   }
 
-  const { dept_manager } = managerData[0];
+  const possibleManagers = managerData.filter((employee) => employee.dept_manager && employee.dept_manager.length > 0);
+  if (possibleManagers.length === 0) {
+    return []; // Nenhum gerente encontrado
+  }
+  const managerInfo = possibleManagers[0];
+  const { dept_manager } = managerInfo;
   if (!dept_manager || dept_manager.length === 0) {
     return [];
   }
@@ -113,7 +124,9 @@ const employeesFindAllByManager = async (manager) => {
 const formatTwoPartsString = (twoPartsString) => {
   const trimmedString = twoPartsString.trim().replace(/\s+/g, " ");
   const [firstPart, ...lastPart] = trimmedString.split(" ");
+  // const [firstPart, lastPart] = trimmedString.split(" ");
   const formattedFirstPart = firstPart.charAt(0).toUpperCase() + firstPart.slice(1).toLowerCase();
+  //const formattedLastPart = lastPart.charAt(0).toUpperCase() + lastPart.slice(1).toLowerCase();
   const formattedLastPart = lastPart
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join(" ");
