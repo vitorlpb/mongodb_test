@@ -26,16 +26,16 @@ const main = async () => {
     let connection = await mysqlConnection();
     while (hasMoreData) {
       const [employee] = await connection.execute(`SELECT * FROM employees WHERE emp_no > ${10000 + offset} limit 1`);
-      if (employee.length === 0 || countLimit > 10000) {
+      if (employee.length === 0 || countLimit > 100000) {
         hasMoreData = false;
         break;
       }
       employees.push(employee[0]);
-      const [salaries] = await connection.execute(`SELECT * FROM salaries WHERE emp_no = ${10000 + offset + 1}`);
-      const [titles] = await connection.execute(`SELECT * FROM titles WHERE emp_no = ${10000 + offset + 1}`);
-      const [deptEmployees] = await connection.execute(`SELECT * FROM dept_emp WHERE emp_no = ${10000 + offset + 1}`);
+      const [salaries] = await connection.execute(`SELECT * FROM salaries WHERE emp_no > ${10000 + offset} limit 1`);
+      const [titles] = await connection.execute(`SELECT * FROM titles WHERE emp_no > ${10000 + offset} limit 1`);
+      const [deptEmployees] = await connection.execute(`SELECT * FROM dept_emp WHERE emp_no > ${10000 + offset} limit 1`);
       const deptNos = deptEmployees.map((deptEmp) => deptEmp.dept_no);
-      const [deptManager] = await connection.execute(`SELECT * FROM dept_manager WHERE emp_no = ${10000 + offset + 1}`);
+      const [deptManager] = await connection.execute(`SELECT * FROM dept_manager WHERE emp_no > ${10000 + offset} limit 1`);
       const departments = [];
       for (const deptNo of deptNos) {
         const [dept] = await connection.execute(`SELECT * FROM departments WHERE dept_no = '${deptNo}'`);
@@ -57,7 +57,7 @@ const main = async () => {
       offset++;
       countLimit++;
       count++;
-      if (count === 1000) {
+      if (count === 10000) {
         await saveToMongoDB(employeeTree);
         console.log(`Inserted ${offset} employees`);
         employeeTree.length = 0;

@@ -3,7 +3,7 @@ import { connectMongoDB } from "../db.js";
 const employeesFindAll = async () => {
   const db = await connectMongoDB();
   const collection = db.collection("employee");
-  const employees = await collection.find({}).toArray();
+  const employees = await collection.find({}).limit(100).toArray();
   return employees;
 };
 
@@ -18,6 +18,10 @@ const employeeFindByNameAndLastName = async (name) => {
   const db = await connectMongoDB();
   const collection = db.collection("employee");
   const { firstPart, lastPart } = formatTwoPartsString(name);
+  if(firstPart || lastPart) {
+    const employees = await collection.find({ first_name: firstPart, last_name: lastPart }).toArray();  
+    return employees;
+  }
   const employees = await collection.find({ first_name: {$regex: firstPart}, last_name: {$regex: lastPart} }).toArray(); //$regex
   if (employees.length === 0) {
     const employees = await collection.find({last_name: {$regex: firstPart} }).toArray();
@@ -116,7 +120,9 @@ const employeesFindAllByManager = async (manager) => {
       { "dept_emp.from_date": { $lte: managerToDate } },
       { "dept_emp.to_date": { $gte: managerFromDate } }
     ]
-  }).toArray();
+  })
+  .limit(10)
+  .toArray();
 
   return employees;
 };
